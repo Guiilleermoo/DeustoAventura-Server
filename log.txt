@@ -1,0 +1,11 @@
+Insertando actividadInsertando actividadInsertar trabajador: UNIQUE constraint failed: EMPLEADO.DNIInsertando actividad
+Insertando actividad
+Insertando actividad
+Insertando actividad
+Insertando actividad
+Insertar trabajador: UNIQUE constraint failed: EMPLEADO.DNI
+Insertar trabajador: UNIQUE constraint failed: EMPLEADO.DNI
+Insertar trabajador: UNIQUE constraint failed: EMPLEADO.DNI
+Insertando actividad
+Insertar trabajador: UNIQUE constraint failed: EMPLEADO.DNI
+Insertando actividad
