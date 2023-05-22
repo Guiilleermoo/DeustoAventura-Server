@@ -1,12 +1,13 @@
 #ifndef FUNCIONESBD_H_
 #define FUNCIONESBD_H_
 
-#include "../Cliente.h"
 #include "sqlite3.h"
+#include "../Actividad.h"
 
 char* load_config(char* filename, char* buscar);
 void iniciarBD();
 void cerrarBD();
-void getClientes(sqlite3 *db, Cliente* clientes, int tamanyo);
+char* comprobarCliente(char* dni, char* contra);
+void getActividades(Actividad* actividades, int* tamanyo);
 
 #endif
