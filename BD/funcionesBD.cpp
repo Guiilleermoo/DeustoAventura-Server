@@ -6,7 +6,7 @@
 #include "sqlite3.h"
 
 #include "../Actividad.h"
-
+#include "../Reserva.h"
 sqlite3 *db;
 sqlite3_stmt *stmt;
 int result;
@@ -278,4 +278,68 @@ int getNActividadesPorDificultad(char dificultad[])
 	} while (result == SQLITE_ROW);
 
 	return resultado;
+}
+Reserva** getReservasDNI(char* dni){
+
+
+	int tamanyo = getNActividades();
+	Reserva** reservas = (Reserva**) malloc(sizeof(Reserva*) * tamanyo);
+
+	char sql[] = "select * from RESERVA R, CLIENTE C where  C.COD_CLTE=R.COD_CLTE and C.DNI=?";
+
+	result = sqlite3_prepare_v2(db, sql, strlen(sql), &stmt, NULL);
+
+	if (result != SQLITE_OK)
+		{
+			printf("Error al preparar la consulta SQL: %s\n", sqlite3_errmsg(db));
+		 }
+
+	sqlite3_bind_text(stmt, 1, dni, strlen(dni), SQLITE_STATIC);
+
+		int i;
+		for(i = 0; i < tamanyo; i++)
+		{
+			result = sqlite3_step(stmt);
+			if (result == SQLITE_ROW)
+			{
+				char fecha[30];
+				int codC = sqlite3_column_int(stmt, 0);
+				int codA = sqlite3_column_int(stmt, 1);
+				strcpy(fecha, (char*) sqlite3_column_text(stmt, 2));
+
+
+				int cantP = sqlite3_column_int(stmt, 3);
+
+
+				Reserva* reserva = new Reserva(codC, codA, fecha, cantP);
+
+				reservas[i] = reserva;
+			}
+		}
+	return reservas;
+
+}
+int getNReservas(char* dni){
+	int resultado;
+		char sql[] = "select count(*) from RESERVA R, CLIENTE C where  C.COD_CLTE=R.COD_CLTE and C.DNI==?";
+
+		result = sqlite3_prepare_v2(db, sql, strlen(sql), &stmt, NULL);
+
+		if (result != SQLITE_OK)
+			{
+				printf("Error al preparar la consulta SQL: %s\n", sqlite3_errmsg(db));
+			 }
+
+		sqlite3_bind_text(stmt, 1, dni, strlen(dni), SQLITE_STATIC);
+
+		do {
+			result = sqlite3_step(stmt);
+			if (result == SQLITE_ROW)
+			{
+				resultado = sqlite3_column_int(stmt, 0);
+			}
+		} while (result == SQLITE_ROW);
+
+		return resultado;
+
 }

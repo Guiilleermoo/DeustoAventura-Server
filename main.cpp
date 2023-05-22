@@ -4,12 +4,13 @@
 #include "BD/funcionesBD.h"
 #include "Actividad.h"
 #include "string.h"
-
+#include "Reserva.h"
 #define SERVER_IP "127.0.0.1"
 #define SERVER_PORT 6000
 
 int main()
 {
+	char dni[10];
 	WSADATA wsaData;
 	SOCKET conn_socket;
 	SOCKET comm_socket;
@@ -99,7 +100,7 @@ int main()
 
 		if (strcmp(recvBuff, "ComprobarCliente") == 0)
 		{
-			char dni[10];
+
 			char contra[20];
 			char respuesta[20];
 
@@ -213,6 +214,35 @@ int main()
 		{
 
 		}
+		if (strcmp(recvBuff, "VisualizarReservas") == 0)
+			{
+
+
+					    int tamanyo = getNReservas(dni);
+						Reserva** reservas = new Reserva*[tamanyo];
+
+						reservas = getReservasDNI(dni);
+
+						int i;
+						for(i = 0; i < tamanyo; i++)
+						{
+							strcpy(sendBuff, reservas[i]->fecha);
+							send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+
+							sprintf(sendBuff, "%d", reservas[i]->cantPersonas);
+							send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+							sprintf(sendBuff, "%d", reservas[i]->codActividad);
+							send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+							sprintf(sendBuff, "%d", reservas[i]->codCliente);
+							send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+						}
+						strcpy(sendBuff, "FIN");
+						send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+						printf("Response sent: %d actividades \n", tamanyo);
+						fflush(stdout);
+
+
+			}
 
 		if (strcmp(recvBuff, "EXIT") == 0)
 			break;
