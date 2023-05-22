@@ -16,9 +16,9 @@ Actividad::Actividad()
 Actividad::Actividad(char* nombre, char* dificultad, int limitePerMin, int limitePerMax, int edadMin)
 {
 	this->nombre = new char[strlen(nombre) + 1];
-	this->nombre = nombre;
+	strcpy(this->nombre, nombre);
 	this->dificultad = new char[strlen(dificultad) + 1];
-	this->dificultad = dificultad;
+	strcpy(this->dificultad, dificultad);
 	this->limitePerMin = limitePerMin;
 	this->limitePerMax = limitePerMax;
 	this->edadMin = edadMin;
@@ -27,9 +27,9 @@ Actividad::Actividad(char* nombre, char* dificultad, int limitePerMin, int limit
 Actividad::Actividad(const Actividad &a)
 {
 	this->nombre = new char[strlen(a.nombre) + 1];
-	this->nombre = a.nombre;
+	strcpy(this->nombre, a.nombre);
 	this->dificultad = new char[strlen(a.dificultad) + 1];
-	this->dificultad = a.dificultad;
+	strcpy(this->dificultad, a.dificultad);
 	this->limitePerMin = a.limitePerMin;
 	this->limitePerMax = a.limitePerMax;
 	this->edadMin = a.edadMin;

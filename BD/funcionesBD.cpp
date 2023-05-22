@@ -117,12 +117,11 @@ int getNActividades()
 	return resultado;
 }
 
-Actividad* getActividades()
+Actividad** getActividades()
 {
 	int tamanyo = getNActividades();
-	Actividad* actividades = new Actividad[tamanyo];
+	Actividad** actividades = (Actividad**) malloc(sizeof(Actividad*) * tamanyo);
 
-	int num_linea = 0;
 	char sql[] = "select * from ACTIVIDAD";
 
 	result = sqlite3_prepare_v2(db, sql, strlen(sql), &stmt, NULL);
@@ -132,25 +131,151 @@ Actividad* getActividades()
 			printf("Error al preparar la consulta SQL: %s\n", sqlite3_errmsg(db));
 		 }
 
+		int i;
+		for(i = 0; i < tamanyo; i++)
+		{
+			result = sqlite3_step(stmt);
+			if (result == SQLITE_ROW)
+			{
+				char nombre[30];
+				char dificultad[10];
+				strcpy(nombre, (char*) sqlite3_column_text(stmt, 1));
+				strcpy(dificultad, (char*) sqlite3_column_text(stmt, 2));
+				int limitePerMin = sqlite3_column_int(stmt, 3);
+				int limitePerMax = sqlite3_column_int(stmt, 4);
+				int edadMin = sqlite3_column_int(stmt, 5);
+
+				Actividad* actividad = new Actividad(nombre, dificultad, limitePerMin, limitePerMax, edadMin);
+
+				actividades[i] = actividad;
+			}
+		}
+
+	return actividades;
+}
+
+int getNActividadesPorCiudad(char ciudad[])
+{
+	int resultado;
+	char sql[] = "select count(*) from ACTIVIDAD A, PARQUE P, LUGAR L, OFERTA O where A.COD_ACT = O.COD_ACT and O.COD_PARK = P.COD_PARK and P.COD_CIU = L.COD_CIU and L.NOMBRE_CIU = ?";
+
+	result = sqlite3_prepare_v2(db, sql, strlen(sql), &stmt, NULL);
+
+	if (result != SQLITE_OK)
+		{
+			printf("Error al preparar la consulta SQL: %s\n", sqlite3_errmsg(db));
+		 }
+
+	sqlite3_bind_text(stmt, 1, ciudad, strlen(ciudad), SQLITE_STATIC);
+
 	do {
 		result = sqlite3_step(stmt);
 		if (result == SQLITE_ROW)
 		{
-			char nombre[30];
-			char dificultad[10];
-			strcpy(nombre, (char*) sqlite3_column_text(stmt, 1));
-			strcpy(dificultad, (char*) sqlite3_column_text(stmt, 2));
-			int limitePerMin = sqlite3_column_int(stmt, 3);
-			int limitePerMax = sqlite3_column_int(stmt, 4);
-			int edadMin = sqlite3_column_int(stmt, 5);
-
-			Actividad actividad(nombre, dificultad, limitePerMin, limitePerMax, edadMin);
-
-			actividades[num_linea] = actividad;
-
-			num_linea++;
+			resultado = sqlite3_column_int(stmt, 0);
 		}
 	} while (result == SQLITE_ROW);
 
+	return resultado;
+}
+
+Actividad** getActividadesPorCiudad(char ciudad[])
+{
+	int tamanyo = getNActividades();
+	Actividad** actividades = (Actividad**) malloc(sizeof(Actividad*) * tamanyo);
+
+	char sql[] = "select A.COD_ACT, A.NOMBRE_ACT, A.DIFICULTAD, A.LIMITE_PER_MIN, A.LIMITE_PER_MAX, A.EDAD_MIN from ACTIVIDAD A, PARQUE P, LUGAR L, OFERTA O where A.COD_ACT = O.COD_ACT and O.COD_PARK = P.COD_PARK and P.COD_CIU = L.COD_CIU and L.NOMBRE_CIU = ?";
+
+	result = sqlite3_prepare_v2(db, sql, strlen(sql), &stmt, NULL);
+
+	if (result != SQLITE_OK)
+		{
+			printf("Error al preparar la consulta SQL: %s\n", sqlite3_errmsg(db));
+		 }
+
+	sqlite3_bind_text(stmt, 1, ciudad, strlen(ciudad), SQLITE_STATIC);
+
+		int i;
+		for(i = 0; i < tamanyo; i++)
+		{
+			result = sqlite3_step(stmt);
+			if (result == SQLITE_ROW)
+			{
+				char nombre[30];
+				char dificultad[10];
+				strcpy(nombre, (char*) sqlite3_column_text(stmt, 1));
+				strcpy(dificultad, (char*) sqlite3_column_text(stmt, 2));
+				int limitePerMin = sqlite3_column_int(stmt, 3);
+				int limitePerMax = sqlite3_column_int(stmt, 4);
+				int edadMin = sqlite3_column_int(stmt, 5);
+
+				Actividad* actividad = new Actividad(nombre, dificultad, limitePerMin, limitePerMax, edadMin);
+
+				actividades[i] = actividad;
+			}
+		}
 	return actividades;
+}
+
+Actividad** getActividadesPorDificultad(char dificultad[])
+{
+	int tamanyo = getNActividades();
+	Actividad** actividades = (Actividad**) malloc(sizeof(Actividad*) * tamanyo);
+
+	char sql[] = "select* from ACTIVIDAD where DIFICULTAD = ?";
+
+	result = sqlite3_prepare_v2(db, sql, strlen(sql), &stmt, NULL);
+
+	if (result != SQLITE_OK)
+		{
+			printf("Error al preparar la consulta SQL: %s\n", sqlite3_errmsg(db));
+		 }
+
+	sqlite3_bind_text(stmt, 1, dificultad, strlen(dificultad), SQLITE_STATIC);
+
+		int i;
+		for(i = 0; i < tamanyo; i++)
+		{
+			result = sqlite3_step(stmt);
+			if (result == SQLITE_ROW)
+			{
+				char nombre[30];
+				char dificultad[10];
+				strcpy(nombre, (char*) sqlite3_column_text(stmt, 1));
+				strcpy(dificultad, (char*) sqlite3_column_text(stmt, 2));
+				int limitePerMin = sqlite3_column_int(stmt, 3);
+				int limitePerMax = sqlite3_column_int(stmt, 4);
+				int edadMin = sqlite3_column_int(stmt, 5);
+
+				Actividad* actividad = new Actividad(nombre, dificultad, limitePerMin, limitePerMax, edadMin);
+
+				actividades[i] = actividad;
+			}
+		}
+	return actividades;
+}
+
+int getNActividadesPorDificultad(char dificultad[])
+{
+	int resultado;
+	char sql[] = "select count(*) from ACTIVIDAD A where DIFICULTAD = ?";
+
+	result = sqlite3_prepare_v2(db, sql, strlen(sql), &stmt, NULL);
+
+	if (result != SQLITE_OK)
+		{
+			printf("Error al preparar la consulta SQL: %s\n", sqlite3_errmsg(db));
+		 }
+
+	sqlite3_bind_text(stmt, 1, dificultad, strlen(dificultad), SQLITE_STATIC);
+
+	do {
+		result = sqlite3_step(stmt);
+		if (result == SQLITE_ROW)
+		{
+			resultado = sqlite3_column_int(stmt, 0);
+		}
+	} while (result == SQLITE_ROW);
+
+	return resultado;
 }

@@ -121,22 +121,22 @@ int main()
 		if (strcmp(recvBuff, "VisualizarActividades") == 0)
 		{
 			int tamanyo = getNActividades();
-			Actividad* actividades = new Actividad[tamanyo];
+			Actividad** actividades = new Actividad*[tamanyo];
 
 			actividades = getActividades();
 
 			int i;
 			for(i = 0; i < tamanyo; i++)
 			{
-				strcpy(sendBuff, actividades[i].nombre);
+				strcpy(sendBuff, actividades[i]->nombre);
 				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
-				strcpy(sendBuff, actividades[i].dificultad);
+				strcpy(sendBuff, actividades[i]->dificultad);
 				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
-				strcpy(sendBuff, (char*) actividades[i].limitePerMin);
+				sprintf(sendBuff, "%d", actividades[i]->limitePerMin);
 				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
-				strcpy(sendBuff, (char*)actividades[i].limitePerMax);
+				sprintf(sendBuff, "%d", actividades[i]->limitePerMax);
 				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
-				strcpy(sendBuff, (char*)actividades[i].edadMin);
+				sprintf(sendBuff, "%d", actividades[i]->edadMin);
 				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
 			}
 			strcpy(sendBuff, "FIN");
@@ -147,12 +147,66 @@ int main()
 
 		if (strcmp(recvBuff, "VisualizarActividadesPorCiudad") == 0)
 		{
+			char ciudad[20];
 
+			recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+			strcpy(ciudad, recvBuff);
+
+			int tamanyo = getNActividadesPorCiudad(ciudad);
+			Actividad** actividades = new Actividad*[tamanyo];
+
+			actividades = getActividadesPorCiudad(ciudad);
+
+			int i;
+			for(i = 0; i < tamanyo; i++)
+			{
+				strcpy(sendBuff, actividades[i]->nombre);
+				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+				strcpy(sendBuff, actividades[i]->dificultad);
+				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+				sprintf(sendBuff, "%d", actividades[i]->limitePerMin);
+				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+				sprintf(sendBuff, "%d", actividades[i]->limitePerMax);
+				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+				sprintf(sendBuff, "%d", actividades[i]->edadMin);
+				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+			}
+				strcpy(sendBuff, "FIN");
+				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+				printf("Response sent: %d actividades \n", tamanyo);
+				fflush(stdout);
 		}
 
 		if (strcmp(recvBuff, "VisualizarActividadesPorDificultad") == 0)
 		{
+			char dificultad[20];
 
+			recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+			strcpy(dificultad, recvBuff);
+
+			int tamanyo = getNActividadesPorDificultad(dificultad);
+			Actividad** actividades = new Actividad*[tamanyo];
+
+			actividades = getActividadesPorDificultad(dificultad);
+
+			int i;
+			for(i = 0; i < tamanyo; i++)
+			{
+				strcpy(sendBuff, actividades[i]->nombre);
+				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+				strcpy(sendBuff, actividades[i]->dificultad);
+				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+				sprintf(sendBuff, "%d", actividades[i]->limitePerMin);
+				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+				sprintf(sendBuff, "%d", actividades[i]->limitePerMax);
+				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+				sprintf(sendBuff, "%d", actividades[i]->edadMin);
+				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+			}
+			strcpy(sendBuff, "FIN");
+			send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+			printf("Response sent: %d actividades \n", tamanyo);
+			fflush(stdout);
 		}
 
 		if (strcmp(recvBuff, "MostrarCiudades") == 0)
