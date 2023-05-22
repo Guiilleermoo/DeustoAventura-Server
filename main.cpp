@@ -120,13 +120,13 @@ int main()
 
 		if (strcmp(recvBuff, "VisualizarActividades") == 0)
 		{
-			int* tamanyo = 0;
-			Actividad* actividades = NULL;
+			int tamanyo = getNActividades();
+			Actividad* actividades = new Actividad[tamanyo];
 
-			getActividades(actividades, tamanyo);
+			actividades = getActividades();
 
 			int i;
-			for(i = 0; i < *tamanyo; i++)
+			for(i = 0; i < tamanyo; i++)
 			{
 				strcpy(sendBuff, actividades[i].nombre);
 				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
@@ -139,12 +139,11 @@ int main()
 				strcpy(sendBuff, (char*)actividades[i].edadMin);
 				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
 			}
-
-			printf("Response sent: %d actividades \n", *tamanyo);
+			strcpy(sendBuff, "FIN");
+			send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+			printf("Response sent: %d actividades \n", tamanyo);
 			fflush(stdout);
 		}
-
-
 
 		if (strcmp(recvBuff, "VisualizarActividadesPorCiudad") == 0)
 		{

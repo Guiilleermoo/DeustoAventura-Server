@@ -8,6 +8,7 @@ char* load_config(char* filename, char* buscar);
 void iniciarBD();
 void cerrarBD();
 char* comprobarCliente(char* dni, char* contra);
-void getActividades(Actividad* actividades, int* tamanyo);
+Actividad* getActividades();
+int getNActividades();
 
 #endif

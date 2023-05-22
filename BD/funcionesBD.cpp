@@ -94,16 +94,46 @@ char* comprobarCliente(char dni[], char contra[])
 	return "Incorrecto";
 }
 
-void getActividades(Actividad* actividades, int* tamanyo)
+int getNActividades()
 {
-	*tamanyo = 0;
-	char sql[] = "select * from ACTIVIDAD";
+	int resultado;
+	char sql[] = "select count(*) from ACTIVIDAD";
 
-	sqlite3_prepare_v2(db, sql, strlen(sql), &stmt, NULL);
+	result = sqlite3_prepare_v2(db, sql, strlen(sql), &stmt, NULL);
+
+	if (result != SQLITE_OK)
+		{
+			printf("Error al preparar la consulta SQL: %s\n", sqlite3_errmsg(db));
+		 }
 
 	do {
 		result = sqlite3_step(stmt);
-		tamanyo++;
+		if (result == SQLITE_ROW)
+		{
+			resultado = sqlite3_column_int(stmt, 0);
+		}
+	} while (result == SQLITE_ROW);
+
+	return resultado;
+}
+
+Actividad* getActividades()
+{
+	int tamanyo = getNActividades();
+	Actividad* actividades = new Actividad[tamanyo];
+
+	int num_linea = 0;
+	char sql[] = "select * from ACTIVIDAD";
+
+	result = sqlite3_prepare_v2(db, sql, strlen(sql), &stmt, NULL);
+
+	if (result != SQLITE_OK)
+		{
+			printf("Error al preparar la consulta SQL: %s\n", sqlite3_errmsg(db));
+		 }
+
+	do {
+		result = sqlite3_step(stmt);
 		if (result == SQLITE_ROW)
 		{
 			char nombre[30];
@@ -116,8 +146,11 @@ void getActividades(Actividad* actividades, int* tamanyo)
 
 			Actividad actividad(nombre, dificultad, limitePerMin, limitePerMax, edadMin);
 
-			actividades[*tamanyo] = actividad;
+			actividades[num_linea] = actividad;
 
+			num_linea++;
 		}
 	} while (result == SQLITE_ROW);
+
+	return actividades;
 }
