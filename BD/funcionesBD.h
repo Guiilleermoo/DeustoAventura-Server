@@ -18,5 +18,6 @@ Reserva** getReservasDNI(char* dni);
 int getNReservas(char* dni);
 void crearReserva(int codCliente, int codActividad, char fecha[], int cantPersonas);
 int codigoCliente(char* dni);
-
+void borrarReserva(int codCliente,int  codActividad, char*  fecha);
+void registrarse(char* dni, char* nombre,char* apellido,char* correo,char* contra,int tlf,int cod_ciu);
 #endif

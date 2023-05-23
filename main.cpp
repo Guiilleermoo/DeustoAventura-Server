@@ -241,7 +241,7 @@ int main()
 				fflush(stdout);
 			}
 
-		if (strcmp(recvBuff, "HacerReserva") == 0)
+		if (strcmp(recvBuff, "R8") == 0)
 		{
 			int codCliente = codigoCliente(dni);
 			int codActividad;
@@ -257,9 +257,65 @@ int main()
 
 			crearReserva(codCliente, codActividad, fecha, cantPersonas);
 
-			strcpy(sendBuff, "Reservado");
+			strcpy(sendBuff, "R");
 			send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+			printf("Response sent: R \n");
+			fflush(stdout);
+
 		}
+
+
+		if (strcmp(recvBuff, "RD") == 0)
+		{
+			int codCliente = codigoCliente(dni);
+			int codActividad;
+			char fecha[30];
+
+			recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+			codActividad = atoi(recvBuff);
+			recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+			strcpy(fecha, recvBuff);
+
+
+
+			borrarReserva(codCliente, codActividad, fecha);
+
+			strcpy(sendBuff, "RF");
+			send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+			printf("Response sent: RF \n");
+			fflush(stdout);
+
+		}
+		if (strcmp(recvBuff, "REG") == 0)
+				{
+			char dni[10], nombre[20],apellido[20],correo[20],contra[20];
+			int tlf, cod_ciu;
+			recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+			strcpy(dni, recvBuff);
+			recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+			strcpy(nombre, recvBuff);
+			recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+			strcpy(apellido, recvBuff);
+			recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+			tlf= atoi(recvBuff);
+			recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+			strcpy(correo, recvBuff);
+			recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+			strcpy(contra, recvBuff);
+			recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+			cod_ciu= atoi(recvBuff);
+
+
+					registrarse(dni,nombre,apellido,correo,contra,tlf,cod_ciu);
+
+					strcpy(sendBuff, "REGE");
+					send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+					printf("Response sent: RF \n");
+					fflush(stdout);
+
+				}
+
+
 
 		if (strcmp(recvBuff, "EXIT") == 0)
 			break;

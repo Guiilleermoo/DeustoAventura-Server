@@ -389,6 +389,7 @@ void crearReserva(int codCliente, int codActividad, char fecha[], int cantPerson
 		fflush(stdout);
 	}else{
 		printf("Reserva insertada ");
+		fflush(stdout);
 	}
 
 	sqlite3_finalize(stmt);
@@ -420,4 +421,79 @@ int codigoCliente(char* dni)
 	sqlite3_finalize(stmt);
 
 	return resultado;
+}
+void borrarReserva(int codCliente,int  codActividad, char*  fecha){
+
+
+		char sql[] = "delete  from RESERVA where COD_ACT = ? and COD_CLTE=? and FECHA_RES=?";
+
+		result = sqlite3_prepare_v2(db, sql, strlen(sql), &stmt, NULL);
+
+		if (result != SQLITE_OK)
+		{
+			printf("Error al preparar la consulta SQL: %s\n", sqlite3_errmsg(db));
+		}
+
+		sqlite3_bind_int(stmt, 1, codActividad);
+
+		sqlite3_bind_int(stmt, 2,codCliente );
+
+		sqlite3_bind_text(stmt, 3, fecha, strlen(fecha), SQLITE_STATIC);
+
+		result = sqlite3_step(stmt);
+
+		if (result != SQLITE_DONE) {
+			printf("Error borrando reserva\n");
+
+			fprintf(stderr, "%s", sqlite3_errmsg(db));
+			fflush(stdout);
+		}else{
+			printf("Reserva borrada ");
+			fflush(stdout);
+		}
+
+		sqlite3_finalize(stmt);
+
+}
+
+void registrarse(char* dni, char* nombre,char* apellido,char* correo,char* contra,int tlf,int cod_ciu){
+
+	char sql[] = "insert  into CLIENTE values(NULL,?,?,?,?,?,?,?)";
+
+	result = sqlite3_prepare_v2(db, sql, strlen(sql), &stmt, NULL);
+
+	if (result != SQLITE_OK)
+	{
+		printf("Error al preparar la consulta SQL: %s\n", sqlite3_errmsg(db));
+	}
+
+	sqlite3_bind_text(stmt, 1, dni, strlen(dni), SQLITE_STATIC);
+
+	sqlite3_bind_text(stmt, 2, nombre, strlen(nombre), SQLITE_STATIC);
+
+	sqlite3_bind_text(stmt, 3, apellido, strlen(apellido), SQLITE_STATIC);
+	sqlite3_bind_int(stmt, 4, tlf);
+	sqlite3_bind_text(stmt, 5, correo, strlen(correo), SQLITE_STATIC);
+
+	sqlite3_bind_text(stmt, 6, contra, strlen(contra), SQLITE_STATIC);
+
+
+
+	sqlite3_bind_int(stmt, 7,cod_ciu );
+
+
+
+	result = sqlite3_step(stmt);
+
+	if (result != SQLITE_DONE) {
+		printf("Error borrando reserva\n");
+
+		fprintf(stderr, "%s", sqlite3_errmsg(db));
+		fflush(stdout);
+	}else{
+		printf("Reserva borrada ");
+		fflush(stdout);
+	}
+
+	sqlite3_finalize(stmt);
 }
