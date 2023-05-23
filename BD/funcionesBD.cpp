@@ -114,6 +114,8 @@ int getNActividades()
 		}
 	} while (result == SQLITE_ROW);
 
+	sqlite3_finalize(stmt);
+
 	return resultado;
 }
 
@@ -137,6 +139,7 @@ Actividad** getActividades()
 			result = sqlite3_step(stmt);
 			if (result == SQLITE_ROW)
 			{
+				int codigo = sqlite3_column_int(stmt, 0);
 				char nombre[30];
 				char dificultad[10];
 				strcpy(nombre, (char*) sqlite3_column_text(stmt, 1));
@@ -145,11 +148,13 @@ Actividad** getActividades()
 				int limitePerMax = sqlite3_column_int(stmt, 4);
 				int edadMin = sqlite3_column_int(stmt, 5);
 
-				Actividad* actividad = new Actividad(nombre, dificultad, limitePerMin, limitePerMax, edadMin);
+				Actividad* actividad = new Actividad(codigo, nombre, dificultad, limitePerMin, limitePerMax, edadMin);
 
 				actividades[i] = actividad;
 			}
 		}
+
+	sqlite3_finalize(stmt);
 
 	return actividades;
 }
@@ -176,6 +181,8 @@ int getNActividadesPorCiudad(char ciudad[])
 		}
 	} while (result == SQLITE_ROW);
 
+	sqlite3_finalize(stmt);
+
 	return resultado;
 }
 
@@ -195,25 +202,29 @@ Actividad** getActividadesPorCiudad(char ciudad[])
 
 	sqlite3_bind_text(stmt, 1, ciudad, strlen(ciudad), SQLITE_STATIC);
 
-		int i;
-		for(i = 0; i < tamanyo; i++)
+	int i;
+	for(i = 0; i < tamanyo; i++)
+	{
+		result = sqlite3_step(stmt);
+		if (result == SQLITE_ROW)
 		{
-			result = sqlite3_step(stmt);
-			if (result == SQLITE_ROW)
-			{
-				char nombre[30];
-				char dificultad[10];
-				strcpy(nombre, (char*) sqlite3_column_text(stmt, 1));
-				strcpy(dificultad, (char*) sqlite3_column_text(stmt, 2));
-				int limitePerMin = sqlite3_column_int(stmt, 3);
-				int limitePerMax = sqlite3_column_int(stmt, 4);
-				int edadMin = sqlite3_column_int(stmt, 5);
+			int codigo = sqlite3_column_int(stmt, 0);
+			char nombre[30];
+			char dificultad[10];
+			strcpy(nombre, (char*) sqlite3_column_text(stmt, 1));
+			strcpy(dificultad, (char*) sqlite3_column_text(stmt, 2));
+			int limitePerMin = sqlite3_column_int(stmt, 3);
+			int limitePerMax = sqlite3_column_int(stmt, 4);
+			int edadMin = sqlite3_column_int(stmt, 5);
 
-				Actividad* actividad = new Actividad(nombre, dificultad, limitePerMin, limitePerMax, edadMin);
+			Actividad* actividad = new Actividad(codigo, nombre, dificultad, limitePerMin, limitePerMax, edadMin);
 
-				actividades[i] = actividad;
-			}
+			actividades[i] = actividad;
 		}
+	}
+
+	sqlite3_finalize(stmt);
+
 	return actividades;
 }
 
@@ -233,25 +244,29 @@ Actividad** getActividadesPorDificultad(char dificultad[])
 
 	sqlite3_bind_text(stmt, 1, dificultad, strlen(dificultad), SQLITE_STATIC);
 
-		int i;
-		for(i = 0; i < tamanyo; i++)
+	int i;
+	for(i = 0; i < tamanyo; i++)
+	{
+		result = sqlite3_step(stmt);
+		if (result == SQLITE_ROW)
 		{
-			result = sqlite3_step(stmt);
-			if (result == SQLITE_ROW)
-			{
-				char nombre[30];
-				char dificultad[10];
-				strcpy(nombre, (char*) sqlite3_column_text(stmt, 1));
-				strcpy(dificultad, (char*) sqlite3_column_text(stmt, 2));
-				int limitePerMin = sqlite3_column_int(stmt, 3);
-				int limitePerMax = sqlite3_column_int(stmt, 4);
-				int edadMin = sqlite3_column_int(stmt, 5);
+			int codigo = sqlite3_column_int(stmt, 0);
+			char nombre[30];
+			char dificultad[10];
+			strcpy(nombre, (char*) sqlite3_column_text(stmt, 1));
+			strcpy(dificultad, (char*) sqlite3_column_text(stmt, 2));
+			int limitePerMin = sqlite3_column_int(stmt, 3);
+			int limitePerMax = sqlite3_column_int(stmt, 4);
+			int edadMin = sqlite3_column_int(stmt, 5);
 
-				Actividad* actividad = new Actividad(nombre, dificultad, limitePerMin, limitePerMax, edadMin);
+			Actividad* actividad = new Actividad(codigo, nombre, dificultad, limitePerMin, limitePerMax, edadMin);
 
-				actividades[i] = actividad;
-			}
+			actividades[i] = actividad;
 		}
+	}
+
+	sqlite3_finalize(stmt);
+
 	return actividades;
 }
 
@@ -277,6 +292,8 @@ int getNActividadesPorDificultad(char dificultad[])
 		}
 	} while (result == SQLITE_ROW);
 
+	sqlite3_finalize(stmt);
+
 	return resultado;
 }
 Reserva** getReservasDNI(char* dni){
@@ -296,50 +313,111 @@ Reserva** getReservasDNI(char* dni){
 
 	sqlite3_bind_text(stmt, 1, dni, strlen(dni), SQLITE_STATIC);
 
-		int i;
-		for(i = 0; i < tamanyo; i++)
+	int i;
+	for(i = 0; i < tamanyo; i++)
+	{
+		result = sqlite3_step(stmt);
+		if (result == SQLITE_ROW)
 		{
-			result = sqlite3_step(stmt);
-			if (result == SQLITE_ROW)
-			{
-				char fecha[30];
-				int codC = sqlite3_column_int(stmt, 0);
-				int codA = sqlite3_column_int(stmt, 1);
-				strcpy(fecha, (char*) sqlite3_column_text(stmt, 2));
+			char fecha[30];
+			int codC = sqlite3_column_int(stmt, 0);
+			int codA = sqlite3_column_int(stmt, 1);
+			strcpy(fecha, (char*) sqlite3_column_text(stmt, 2));
 
+			int cantP = sqlite3_column_int(stmt, 3);
 
-				int cantP = sqlite3_column_int(stmt, 3);
+			Reserva* reserva = new Reserva(codC, codA, fecha, cantP);
 
-
-				Reserva* reserva = new Reserva(codC, codA, fecha, cantP);
-
-				reservas[i] = reserva;
+			reservas[i] = reserva;
 			}
 		}
+
+	sqlite3_finalize(stmt);
+
 	return reservas;
 
 }
-int getNReservas(char* dni){
+int getNReservas(char* dni)
+{
 	int resultado;
-		char sql[] = "select count(*) from RESERVA R, CLIENTE C where  C.COD_CLTE=R.COD_CLTE and C.DNI==?";
+	char sql[] = "select count(*) from RESERVA R, CLIENTE C where  C.COD_CLTE=R.COD_CLTE and C.DNI==?";
 
-		result = sqlite3_prepare_v2(db, sql, strlen(sql), &stmt, NULL);
+	result = sqlite3_prepare_v2(db, sql, strlen(sql), &stmt, NULL);
 
-		if (result != SQLITE_OK)
-			{
-				printf("Error al preparar la consulta SQL: %s\n", sqlite3_errmsg(db));
-			 }
+	if (result != SQLITE_OK)
+	{
+		printf("Error al preparar la consulta SQL: %s\n", sqlite3_errmsg(db));
+	}
 
-		sqlite3_bind_text(stmt, 1, dni, strlen(dni), SQLITE_STATIC);
+	sqlite3_bind_text(stmt, 1, dni, strlen(dni), SQLITE_STATIC);
 
-		do {
-			result = sqlite3_step(stmt);
-			if (result == SQLITE_ROW)
-			{
-				resultado = sqlite3_column_int(stmt, 0);
-			}
-		} while (result == SQLITE_ROW);
+	do {
+		result = sqlite3_step(stmt);
+		if (result == SQLITE_ROW)
+		{
+			resultado = sqlite3_column_int(stmt, 0);
+		}
+	} while (result == SQLITE_ROW);
 
-		return resultado;
+	sqlite3_finalize(stmt);
 
+	return resultado;
+}
+
+void crearReserva(int codCliente, int codActividad, char fecha[], int cantPersonas)
+{
+	char sql[] = "insert into RESERVA values(?, ?, ?, ?)";
+
+	result = sqlite3_prepare_v2(db, sql, strlen(sql), &stmt, NULL);
+
+	if (result != SQLITE_OK)
+	{
+		printf("Error al preparar la consulta SQL: %s\n", sqlite3_errmsg(db));
+	}
+
+	sqlite3_bind_int(stmt, 1, codCliente);
+	sqlite3_bind_int(stmt, 2, codActividad);
+	sqlite3_bind_text(stmt, 3, fecha, strlen(fecha), SQLITE_STATIC);
+	sqlite3_bind_int(stmt, 4, cantPersonas);
+
+	result = sqlite3_step(stmt);
+
+	if (result != SQLITE_DONE) {
+		printf("Error insertando la reserva\n");
+
+		fprintf(stderr, "%s", sqlite3_errmsg(db));
+		fflush(stdout);
+	}else{
+		printf("Reserva insertada ");
+	}
+
+	sqlite3_finalize(stmt);
+}
+
+int codigoCliente(char* dni)
+{
+	int resultado;
+
+	char sql[] = "select COD_CLTE from CLIENTE where DNI = ?";
+
+	result = sqlite3_prepare_v2(db, sql, strlen(sql), &stmt, NULL);
+
+	if (result != SQLITE_OK)
+	{
+		printf("Error al preparar la consulta SQL: %s\n", sqlite3_errmsg(db));
+	}
+
+	sqlite3_bind_text(stmt, 1, dni, strlen(dni), SQLITE_STATIC);
+
+	do {
+		result = sqlite3_step(stmt);
+		if (result == SQLITE_ROW)
+		{
+			resultado = sqlite3_column_int(stmt, 0);
+		}
+	} while (result == SQLITE_ROW);
+
+	sqlite3_finalize(stmt);
+
+	return resultado;
 }

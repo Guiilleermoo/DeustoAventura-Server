@@ -16,4 +16,7 @@ Actividad** getActividadesPorDificultad(char dificultad[]);
 int getNActividadesPorDificultad(char dificultad[]);
 Reserva** getReservasDNI(char* dni);
 int getNReservas(char* dni);
+void crearReserva(int codCliente, int codActividad, char fecha[], int cantPersonas);
+int codigoCliente(char* dni);
+
 #endif

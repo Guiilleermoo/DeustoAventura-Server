@@ -6,6 +6,7 @@ using namespace std;
 
 Actividad::Actividad()
 {
+	this->codigo = 0;
 	this->nombre = NULL;
 	this->dificultad = NULL;
 	this->limitePerMin = 0;
@@ -13,8 +14,9 @@ Actividad::Actividad()
 	this->edadMin = 0;
 }
 
-Actividad::Actividad(char* nombre, char* dificultad, int limitePerMin, int limitePerMax, int edadMin)
+Actividad::Actividad(int codigo, char* nombre, char* dificultad, int limitePerMin, int limitePerMax, int edadMin)
 {
+	this->codigo = codigo;
 	this->nombre = new char[strlen(nombre) + 1];
 	strcpy(this->nombre, nombre);
 	this->dificultad = new char[strlen(dificultad) + 1];
@@ -26,6 +28,7 @@ Actividad::Actividad(char* nombre, char* dificultad, int limitePerMin, int limit
 
 Actividad::Actividad(const Actividad &a)
 {
+	this->codigo = a.codigo;
 	this->nombre = new char[strlen(a.nombre) + 1];
 	strcpy(this->nombre, a.nombre);
 	this->dificultad = new char[strlen(a.dificultad) + 1];

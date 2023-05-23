@@ -100,7 +100,6 @@ int main()
 
 		if (strcmp(recvBuff, "ComprobarCliente") == 0)
 		{
-
 			char contra[20];
 			char respuesta[20];
 
@@ -129,6 +128,8 @@ int main()
 			int i;
 			for(i = 0; i < tamanyo; i++)
 			{
+				sprintf(sendBuff, "%d", actividades[i]->codigo);
+				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
 				strcpy(sendBuff, actividades[i]->nombre);
 				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
 				strcpy(sendBuff, actividades[i]->dificultad);
@@ -161,6 +162,8 @@ int main()
 			int i;
 			for(i = 0; i < tamanyo; i++)
 			{
+				sprintf(sendBuff, "%d", actividades[i]->codigo);
+				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
 				strcpy(sendBuff, actividades[i]->nombre);
 				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
 				strcpy(sendBuff, actividades[i]->dificultad);
@@ -193,6 +196,8 @@ int main()
 			int i;
 			for(i = 0; i < tamanyo; i++)
 			{
+				sprintf(sendBuff, "%d", actividades[i]->codigo);
+				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
 				strcpy(sendBuff, actividades[i]->nombre);
 				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
 				strcpy(sendBuff, actividades[i]->dificultad);
@@ -210,39 +215,51 @@ int main()
 			fflush(stdout);
 		}
 
-		if (strcmp(recvBuff, "MostrarCiudades") == 0)
-		{
-
-		}
 		if (strcmp(recvBuff, "VisualizarReservas") == 0)
 			{
+				int tamanyo = getNReservas(dni);
+				Reserva** reservas = new Reserva*[tamanyo];
 
+				reservas = getReservasDNI(dni);
 
-					    int tamanyo = getNReservas(dni);
-						Reserva** reservas = new Reserva*[tamanyo];
+				int i;
+				for(i = 0; i < tamanyo; i++)
+				{
+					strcpy(sendBuff, reservas[i]->fecha);
+					send(comm_socket, sendBuff, sizeof(sendBuff), 0);
 
-						reservas = getReservasDNI(dni);
-
-						int i;
-						for(i = 0; i < tamanyo; i++)
-						{
-							strcpy(sendBuff, reservas[i]->fecha);
-							send(comm_socket, sendBuff, sizeof(sendBuff), 0);
-
-							sprintf(sendBuff, "%d", reservas[i]->cantPersonas);
-							send(comm_socket, sendBuff, sizeof(sendBuff), 0);
-							sprintf(sendBuff, "%d", reservas[i]->codActividad);
-							send(comm_socket, sendBuff, sizeof(sendBuff), 0);
-							sprintf(sendBuff, "%d", reservas[i]->codCliente);
-							send(comm_socket, sendBuff, sizeof(sendBuff), 0);
-						}
-						strcpy(sendBuff, "FIN");
-						send(comm_socket, sendBuff, sizeof(sendBuff), 0);
-						printf("Response sent: %d actividades \n", tamanyo);
-						fflush(stdout);
-
-
+					sprintf(sendBuff, "%d", reservas[i]->cantPersonas);
+					send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+					sprintf(sendBuff, "%d", reservas[i]->codActividad);
+					send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+					sprintf(sendBuff, "%d", reservas[i]->codCliente);
+					send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+				}
+				strcpy(sendBuff, "FIN");
+				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+				printf("Response sent: %d actividades \n", tamanyo);
+				fflush(stdout);
 			}
+
+		if (strcmp(recvBuff, "HacerReserva") == 0)
+		{
+			int codCliente = codigoCliente(dni);
+			int codActividad;
+			char fecha[30];
+			int cantPersonas;
+
+			recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+			codActividad = atoi(recvBuff);
+			recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+			strcpy(fecha, recvBuff);
+			recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+			cantPersonas = atoi(recvBuff);
+
+			crearReserva(codCliente, codActividad, fecha, cantPersonas);
+
+			strcpy(sendBuff, "Reservado");
+			send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+		}
 
 		if (strcmp(recvBuff, "EXIT") == 0)
 			break;
