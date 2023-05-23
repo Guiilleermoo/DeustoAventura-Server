@@ -141,10 +141,19 @@ int main()
 				sprintf(sendBuff, "%d", actividades[i]->edadMin);
 				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
 			}
-			strcpy(sendBuff, "FIN");
-			send(comm_socket, sendBuff, sizeof(sendBuff), 0);
-			printf("Response sent: %d actividades \n", tamanyo);
+			if(tamanyo==0){
+				strcpy(sendBuff, "TAM0");
+				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+				printf("Response sent: %d actividades \n", tamanyo);
+			}else{
+				strcpy(sendBuff, "FIN");
+				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+				printf("Response sent: %d actividades \n", tamanyo);
+
+			}
+
 			fflush(stdout);
+
 		}
 
 		if (strcmp(recvBuff, "VisualizarActividadesPorCiudad") == 0)
@@ -155,6 +164,8 @@ int main()
 			strcpy(ciudad, recvBuff);
 
 			int tamanyo = getNActividadesPorCiudad(ciudad);
+
+
 			Actividad** actividades = new Actividad*[tamanyo];
 
 			actividades = getActividadesPorCiudad(ciudad);
@@ -175,10 +186,20 @@ int main()
 				sprintf(sendBuff, "%d", actividades[i]->edadMin);
 				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
 			}
+			if(tamanyo==0){
+					strcpy(sendBuff, "TAM0");
+					send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+
+				}
+			if(tamanyo!=0)
+						{
 				strcpy(sendBuff, "FIN");
 				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
 				printf("Response sent: %d actividades \n", tamanyo);
-				fflush(stdout);
+						}
+
+
+
 		}
 
 		if (strcmp(recvBuff, "VisualizarActividadesPorDificultad") == 0)
@@ -209,9 +230,19 @@ int main()
 				sprintf(sendBuff, "%d", actividades[i]->edadMin);
 				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
 			}
-			strcpy(sendBuff, "FIN");
-			send(comm_socket, sendBuff, sizeof(sendBuff), 0);
-			printf("Response sent: %d actividades \n", tamanyo);
+			if(tamanyo==0){
+				strcpy(sendBuff, "TAM0");
+				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+
+			}
+			if(tamanyo!=0)
+			{
+				strcpy(sendBuff, "FIN");
+				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+				printf("Response sent: %d actividades \n", tamanyo);
+
+			}
+
 			fflush(stdout);
 		}
 
@@ -235,10 +266,17 @@ int main()
 					sprintf(sendBuff, "%d", reservas[i]->codCliente);
 					send(comm_socket, sendBuff, sizeof(sendBuff), 0);
 				}
-				strcpy(sendBuff, "FIN");
-				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
-				printf("Response sent: %d actividades \n", tamanyo);
-				fflush(stdout);
+
+				if(tamanyo==0){
+					strcpy(sendBuff, "TAM0");
+					send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+				}else{
+					strcpy(sendBuff, "FIN");
+					send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+					printf("Response sent: %d actividades \n", tamanyo);
+									fflush(stdout);
+				}
+
 			}
 
 		if (strcmp(recvBuff, "R8") == 0)
@@ -306,12 +344,12 @@ int main()
 			cod_ciu= atoi(recvBuff);
 
 
-					registrarse(dni,nombre,apellido,correo,contra,tlf,cod_ciu);
+				registrarse(dni,nombre,apellido,correo,contra,tlf,cod_ciu);
 
-					strcpy(sendBuff, "REGE");
-					send(comm_socket, sendBuff, sizeof(sendBuff), 0);
-					printf("Response sent: RF \n");
-					fflush(stdout);
+				strcpy(sendBuff, "REGE");
+				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+				printf("Response sent: RF \n");
+				fflush(stdout);
 
 				}
 
