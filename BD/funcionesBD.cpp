@@ -11,6 +11,20 @@ sqlite3 *db;
 sqlite3_stmt *stmt;
 int result;
 
+void mensajeLog(char msg[],char* error)
+{
+	FILE* f;
+	f=fopen("log.txt","a");
+
+	if(error==NULL){
+		fprintf(f,"%s\n",msg);
+	}else{
+		fprintf(f,"%s: %s\n",msg,error);
+	}
+
+	fclose(f);
+}
+
 char* load_config(char* filename, char* buscar)
 {
     FILE* archivo;
@@ -22,6 +36,7 @@ char* load_config(char* filename, char* buscar)
 
     if (archivo == NULL) {
         printf("Error al abrir el archivo.\n");
+		mensajeLog("Error al abrir el archivo.\n", NULL);
         return NULL;
     }
 
@@ -41,6 +56,7 @@ char* load_config(char* filename, char* buscar)
                 resultado = (char*) realloc(resultado, longitud * sizeof(char));
                 if (resultado == NULL) {
                     printf("Error al asignar memoria.\n");
+            		mensajeLog("Error al asignar memoria.\n", NULL);
                     return NULL;
                 }
                 strncpy(resultado, igual + 1, longitud);
@@ -77,6 +93,8 @@ char* comprobarCliente(char dni[], char contra[])
 	if (result != SQLITE_OK)
 	{
 		printf("Error al preparar la consulta SQL: %s\n", sqlite3_errmsg(db));
+		char* error = (char*) sqlite3_errmsg(db);
+		mensajeLog("Error al preparar la consulta SQL: %s\n", error);
 	 }
 
 
@@ -104,6 +122,8 @@ int getNActividades()
 	if (result != SQLITE_OK)
 		{
 			printf("Error al preparar la consulta SQL: %s\n", sqlite3_errmsg(db));
+			char* error = (char*) sqlite3_errmsg(db);
+			mensajeLog("Error al preparar la consulta SQL: %s\n", error);
 		 }
 
 	do {
@@ -131,6 +151,8 @@ Actividad** getActividades()
 	if (result != SQLITE_OK)
 		{
 			printf("Error al preparar la consulta SQL: %s\n", sqlite3_errmsg(db));
+			char* error = (char*) sqlite3_errmsg(db);
+			mensajeLog("Error al preparar la consulta SQL: %s\n", error);
 		 }
 
 		int i;
@@ -169,6 +191,8 @@ int getNActividadesPorCiudad(char ciudad[])
 	if (result != SQLITE_OK)
 		{
 			printf("Error al preparar la consulta SQL: %s\n", sqlite3_errmsg(db));
+			char* error = (char*) sqlite3_errmsg(db);
+			mensajeLog("Error al preparar la consulta SQL: %s\n", error);
 		 }
 
 	sqlite3_bind_text(stmt, 1, ciudad, strlen(ciudad), SQLITE_STATIC);
@@ -198,6 +222,8 @@ Actividad** getActividadesPorCiudad(char ciudad[])
 	if (result != SQLITE_OK)
 		{
 			printf("Error al preparar la consulta SQL: %s\n", sqlite3_errmsg(db));
+			char* error = (char*) sqlite3_errmsg(db);
+			mensajeLog("Error al preparar la consulta SQL: %s\n", error);
 		 }
 
 	sqlite3_bind_text(stmt, 1, ciudad, strlen(ciudad), SQLITE_STATIC);
@@ -240,6 +266,8 @@ Actividad** getActividadesPorDificultad(char dificultad[])
 	if (result != SQLITE_OK)
 		{
 			printf("Error al preparar la consulta SQL: %s\n", sqlite3_errmsg(db));
+			char* error = (char*) sqlite3_errmsg(db);
+			mensajeLog("Error al preparar la consulta SQL: %s\n", error);
 		 }
 
 	sqlite3_bind_text(stmt, 1, dificultad, strlen(dificultad), SQLITE_STATIC);
@@ -280,6 +308,8 @@ int getNActividadesPorDificultad(char dificultad[])
 	if (result != SQLITE_OK)
 		{
 			printf("Error al preparar la consulta SQL: %s\n", sqlite3_errmsg(db));
+			char* error = (char*) sqlite3_errmsg(db);
+			mensajeLog("Error al preparar la consulta SQL: %s\n", error);
 		 }
 
 	sqlite3_bind_text(stmt, 1, dificultad, strlen(dificultad), SQLITE_STATIC);
@@ -309,6 +339,8 @@ Reserva** getReservasDNI(char* dni){
 	if (result != SQLITE_OK)
 		{
 			printf("Error al preparar la consulta SQL: %s\n", sqlite3_errmsg(db));
+			char* error = (char*) sqlite3_errmsg(db);
+			mensajeLog("Error al preparar la consulta SQL: %s\n", error);
 		 }
 
 	sqlite3_bind_text(stmt, 1, dni, strlen(dni), SQLITE_STATIC);
@@ -347,6 +379,8 @@ int getNReservas(char* dni)
 	if (result != SQLITE_OK)
 	{
 		printf("Error al preparar la consulta SQL: %s\n", sqlite3_errmsg(db));
+		char* error = (char*) sqlite3_errmsg(db);
+		mensajeLog("Error al preparar la consulta SQL: %s\n", error);
 	}
 
 	sqlite3_bind_text(stmt, 1, dni, strlen(dni), SQLITE_STATIC);
@@ -373,6 +407,8 @@ void crearReserva(int codCliente, int codActividad, char fecha[], int cantPerson
 	if (result != SQLITE_OK)
 	{
 		printf("Error al preparar la consulta SQL: %s\n", sqlite3_errmsg(db));
+		char* error = (char*) sqlite3_errmsg(db);
+		mensajeLog("Error al preparar la consulta SQL: %s\n", error);
 	}
 
 	sqlite3_bind_int(stmt, 1, codCliente);
@@ -384,11 +420,13 @@ void crearReserva(int codCliente, int codActividad, char fecha[], int cantPerson
 
 	if (result != SQLITE_DONE) {
 		printf("Error insertando la reserva\n");
-
+		char* error = (char*) sqlite3_errmsg(db);
+		mensajeLog("Error insertando la reserva\n", error);
 		fprintf(stderr, "%s", sqlite3_errmsg(db));
 		fflush(stdout);
 	}else{
-		printf("Reserva insertada ");
+		printf("Reserva insertada\n");
+		mensajeLog("Reserva insertada\n", NULL);
 		fflush(stdout);
 	}
 
@@ -406,6 +444,8 @@ int codigoCliente(char* dni)
 	if (result != SQLITE_OK)
 	{
 		printf("Error al preparar la consulta SQL: %s\n", sqlite3_errmsg(db));
+		char* error = (char*) sqlite3_errmsg(db);
+		mensajeLog("Error al preparar la consulta SQL: %s\n", error);
 	}
 
 	sqlite3_bind_text(stmt, 1, dni, strlen(dni), SQLITE_STATIC);
@@ -432,6 +472,8 @@ void borrarReserva(int codCliente,int  codActividad, char*  fecha){
 		if (result != SQLITE_OK)
 		{
 			printf("Error al preparar la consulta SQL: %s\n", sqlite3_errmsg(db));
+			char* error = (char*) sqlite3_errmsg(db);
+			mensajeLog("Error al preparar la consulta SQL: %s\n", error);
 		}
 
 		sqlite3_bind_int(stmt, 1, codActividad);
@@ -444,11 +486,13 @@ void borrarReserva(int codCliente,int  codActividad, char*  fecha){
 
 		if (result != SQLITE_DONE) {
 			printf("Error borrando reserva\n");
-
+			char* error = (char*) sqlite3_errmsg(db);
+			mensajeLog("Error borrando reserva\n", error);
 			fprintf(stderr, "%s", sqlite3_errmsg(db));
 			fflush(stdout);
 		}else{
-			printf("Reserva borrada ");
+			printf("Reserva borrada\n");
+			mensajeLog("Reserva borrada\n", NULL);
 			fflush(stdout);
 		}
 
@@ -465,6 +509,8 @@ void registrarse(char* dni, char* nombre,char* apellido,char* correo,char* contr
 	if (result != SQLITE_OK)
 	{
 		printf("Error al preparar la consulta SQL: %s\n", sqlite3_errmsg(db));
+		char* error = (char*) sqlite3_errmsg(db);
+		mensajeLog("Error al preparar la consulta SQL: %s\n", error);
 	}
 
 	sqlite3_bind_text(stmt, 1, dni, strlen(dni), SQLITE_STATIC);
@@ -486,14 +532,19 @@ void registrarse(char* dni, char* nombre,char* apellido,char* correo,char* contr
 	result = sqlite3_step(stmt);
 
 	if (result != SQLITE_DONE) {
-		printf("Error borrando reserva\n");
+		printf("Error registrando cliente\n");
+		char* error = (char*) sqlite3_errmsg(db);
+		mensajeLog("Error registrando cliente\n", error);
 
 		fprintf(stderr, "%s", sqlite3_errmsg(db));
 		fflush(stdout);
 	}else{
-		printf("Reserva borrada ");
+		printf("Cliente registrado\n");
+		mensajeLog("Cliente registrado\n", NULL);
 		fflush(stdout);
 	}
 
 	sqlite3_finalize(stmt);
 }
+
+

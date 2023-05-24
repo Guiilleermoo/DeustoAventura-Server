@@ -4,6 +4,8 @@
 #include "sqlite3.h"
 #include "../Actividad.h"
 #include "../Reserva.h"
+
+void mensajeLog(char msg[],char* error);
 char* load_config(char* filename, char* buscar);
 void iniciarBD();
 void cerrarBD();
@@ -20,4 +22,5 @@ void crearReserva(int codCliente, int codActividad, char fecha[], int cantPerson
 int codigoCliente(char* dni);
 void borrarReserva(int codCliente,int  codActividad, char*  fecha);
 void registrarse(char* dni, char* nombre,char* apellido,char* correo,char* contra,int tlf,int cod_ciu);
+
 #endif

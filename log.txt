@@ -1,11 +1,57 @@
-Insertando actividadInsertando actividadInsertar trabajador: UNIQUE constraint failed: EMPLEADO.DNIInsertando actividad
-Insertando actividad
-Insertando actividad
-Insertando actividad
-Insertando actividad
-Insertar trabajador: UNIQUE constraint failed: EMPLEADO.DNI
-Insertar trabajador: UNIQUE constraint failed: EMPLEADO.DNI
-Insertar trabajador: UNIQUE constraint failed: EMPLEADO.DNI
-Insertando actividad
-Insertar trabajador: UNIQUE constraint failed: EMPLEADO.DNI
-Insertando actividad
+Initialised.
+
+Socket created.
+
+Failed. Error Code : %d
+Waiting for incoming connections...
+
+Initialised.
+
+Socket created.
+
+Failed
+Waiting for incoming connections...
+
+Initialised.
+
+Socket created.
+
+Failed
+Waiting for incoming connections...
+
+Initialised.
+
+Socket created.
+
+Initialised.
+
+Socket created.
+
+Failed
+Waiting for incoming connections...
+
+Incomming connection...
+
+Waiting for incoming commands from client... 
+
+Command received
+
+Response sent
+
+Command received
+
+Response sent
+
+Command received
+
+Response sent
+
+Command received
+
+Response sent
+
+Command received
+
+Response sent
+Command received
+

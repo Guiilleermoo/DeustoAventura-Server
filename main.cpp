@@ -21,21 +21,27 @@ int main()
 	printf("\nInitialising Winsock...\n");
 	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
 		printf("Failed. Error Code : %d", WSAGetLastError());
+		char* error = (char*) WSAGetLastError();
+		mensajeLog((char*)"Failed. Error Code : %d", error);
 		fflush(stdout);
 		return -1;
 	}
 
 	printf("Initialised.\n");
+	mensajeLog((char*)"Initialised.\n", NULL);
 
 	//SOCKET creation
 	if ((conn_socket = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET) {
 		printf("Could not create socket : %d", WSAGetLastError());
+		char* error = (char*) WSAGetLastError();
+		mensajeLog((char*)"Could not create socket", error);
 		fflush(stdout);
 		WSACleanup();
 		return -1;
 	}
 
 	printf("Socket created.\n");
+	mensajeLog((char*)"Socket created.\n", NULL);
 	fflush(stdout);
 
 	server.sin_addr.s_addr = inet_addr(SERVER_IP);
@@ -46,18 +52,19 @@ int main()
 	if (bind(conn_socket, (struct sockaddr*) &server,
 			sizeof(server)) == SOCKET_ERROR) {
 		printf("Bind failed with error code: %d", WSAGetLastError());
+		char* error = (char*) WSAGetLastError();
+		mensajeLog((char*)"Bind failed with error code: %d", error);
 		fflush(stdout);
 		closesocket(conn_socket);
 		WSACleanup();
 		return -1;
 	}
 
-	printf("Bind done.\n");
-	fflush(stdout);
-
 	//LISTEN to incoming connections (socket server moves to listening mode)
 	if (listen(conn_socket, 1) == SOCKET_ERROR) {
 		printf("Listen failed with error code: %d", WSAGetLastError());
+		char* error = (char*) WSAGetLastError();
+		mensajeLog((char*)"Listen failed with error code: %d", error);
 		fflush(stdout);
 		closesocket(conn_socket);
 		WSACleanup();
@@ -66,12 +73,15 @@ int main()
 
 	//ACCEPT incoming connections (server keeps waiting for them)
 	printf("Waiting for incoming connections...\n");
+	mensajeLog((char*)"Waiting for incoming connections...\n", NULL);
 	fflush(stdout);
 	int stsize = sizeof(struct sockaddr);
 	comm_socket = accept(conn_socket, (struct sockaddr*) &client, &stsize);
 	// Using comm_socket is able to send/receive data to/from connected client
 	if (comm_socket == INVALID_SOCKET) {
 		printf("accept failed with error code : %d", WSAGetLastError());
+		char* error = (char*) WSAGetLastError();
+		mensajeLog((char*)"accept failed with error code : %d", error);
 		fflush(stdout);
 		closesocket(conn_socket);
 		WSACleanup();
@@ -79,6 +89,7 @@ int main()
 	}
 	printf("Incomming connection from: %s (%d)\n", inet_ntoa(client.sin_addr),
 			ntohs(client.sin_port));
+	mensajeLog((char*)"Incomming connection...\n", NULL);
 	fflush(stdout);
 
 	// Closing the listening sockets (is not going to be used anymore)
@@ -86,6 +97,7 @@ int main()
 
 	//SEND and RECEIVE data (CLIENT/SERVER PROTOCOL)
 	printf("Waiting for incoming commands from client... \n");
+	mensajeLog((char*)"Waiting for incoming commands from client... \n", NULL);
 	fflush(stdout);
 	fflush(stdout);
 
@@ -96,6 +108,7 @@ int main()
 		recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
 
 		printf("Command received: %s \n", recvBuff);
+		mensajeLog((char*)"Command received\n", NULL);
 		fflush(stdout);
 
 		if (strcmp(recvBuff, "ComprobarCliente") == 0)
@@ -115,6 +128,7 @@ int main()
 			sprintf(sendBuff, " %s", respuesta);
 			send(comm_socket, sendBuff, sizeof(sendBuff), 0);
 			printf("Response sent: %s \n", sendBuff);
+			mensajeLog((char*)"Response sent\n", NULL);
 			fflush(stdout);
 		}
 
@@ -145,10 +159,12 @@ int main()
 				strcpy(sendBuff, "TAM0");
 				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
 				printf("Response sent: %d actividades \n", tamanyo);
+				mensajeLog((char*)"Response sent\n", NULL);
 			}else{
 				strcpy(sendBuff, "FIN");
 				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
 				printf("Response sent: %d actividades \n", tamanyo);
+				mensajeLog((char*)"Response sent\n", NULL);
 
 			}
 
@@ -196,6 +212,7 @@ int main()
 				strcpy(sendBuff, "FIN");
 				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
 				printf("Response sent: %d actividades \n", tamanyo);
+				mensajeLog((char*)"Response sent\n", NULL);
 						}
 
 
@@ -240,6 +257,7 @@ int main()
 				strcpy(sendBuff, "FIN");
 				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
 				printf("Response sent: %d actividades \n", tamanyo);
+				mensajeLog((char*)"Response sent\n", NULL);
 
 			}
 
@@ -274,7 +292,8 @@ int main()
 					strcpy(sendBuff, "FIN");
 					send(comm_socket, sendBuff, sizeof(sendBuff), 0);
 					printf("Response sent: %d actividades \n", tamanyo);
-									fflush(stdout);
+					mensajeLog((char*)"Response sent", NULL);
+					fflush(stdout);
 				}
 
 			}
@@ -298,6 +317,7 @@ int main()
 			strcpy(sendBuff, "R");
 			send(comm_socket, sendBuff, sizeof(sendBuff), 0);
 			printf("Response sent: R \n");
+			mensajeLog((char*)"Response sent", NULL);
 			fflush(stdout);
 
 		}
@@ -321,6 +341,7 @@ int main()
 			strcpy(sendBuff, "RF");
 			send(comm_socket, sendBuff, sizeof(sendBuff), 0);
 			printf("Response sent: RF \n");
+			mensajeLog((char*)"Response sent", NULL);
 			fflush(stdout);
 
 		}
@@ -349,6 +370,7 @@ int main()
 				strcpy(sendBuff, "REGE");
 				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
 				printf("Response sent: RF \n");
+				mensajeLog((char*)"Response sent", NULL);
 				fflush(stdout);
 
 				}
