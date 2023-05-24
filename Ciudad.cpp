@@ -1,6 +1,9 @@
 #include "Ciudad.h"
 #include "string.h"
 
+#include <iostream>
+using namespace std;
+
 Ciudad::Ciudad()
 {
 	this->codigo = 0;
@@ -26,3 +29,7 @@ Ciudad::~Ciudad()
 	delete [] nombre;
 }
 
+void Ciudad::imprimir()
+{
+	cout << "Ciudad " << this->codigo << ": " << this->nombre << endl;;
+}

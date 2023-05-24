@@ -11,6 +11,8 @@ class Ciudad
 		Ciudad(int codigo, char* nombre);
 		Ciudad(const Ciudad &c);
 		~Ciudad();
+
+		void imprimir();
 };
 
 #endif

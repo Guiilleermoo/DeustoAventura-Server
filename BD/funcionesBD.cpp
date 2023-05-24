@@ -552,7 +552,7 @@ void registrarse(char* dni, char* nombre,char* apellido,char* correo,char* contr
 int getNCiudades()
 {
 	int resultado;
-	char sql[] = "select count(*) from CIUDAD";
+	char sql[] = "select count(*) from LUGAR";
 
 	result = sqlite3_prepare_v2(db, sql, strlen(sql), &stmt, NULL);
 
@@ -581,7 +581,7 @@ Ciudad** getCiudades()
 	int tamanyo = getNCiudades();
 	Ciudad** ciudades = (Ciudad**) malloc(sizeof(Ciudad*) * tamanyo);
 
-	char sql[] = "select * from CIUDAD";
+	char sql[] = "select COD_CIU, NOMBRE_CIU from LUGAR";
 
 	result = sqlite3_prepare_v2(db, sql, strlen(sql), &stmt, NULL);
 
@@ -592,21 +592,21 @@ Ciudad** getCiudades()
 			mensajeLog("Error al preparar la consulta SQL: %s\n", error);
 		 }
 
-		int i;
-		for(i = 0; i < tamanyo; i++)
+	int i;
+	for(i = 0; i < tamanyo; i++)
+	{
+		result = sqlite3_step(stmt);
+		if (result == SQLITE_ROW)
 		{
-			result = sqlite3_step(stmt);
-			if (result == SQLITE_ROW)
-			{
-				int codigo = sqlite3_column_int(stmt, 0);
-				char nombre[30];
-				strcpy(nombre, (char*) sqlite3_column_text(stmt, 1));
+			int codigo = sqlite3_column_int(stmt, 0);
+			char nombre[30];
+			strcpy(nombre, (char*) sqlite3_column_text(stmt, 1));
 
-				Ciudad* ciudad = new Ciudad(codigo, nombre);
+			Ciudad* ciudad = new Ciudad(codigo, nombre);
 
-				ciudades[i] = ciudad;
-			}
+			ciudades[i] = ciudad;
 		}
+	}
 
 	sqlite3_finalize(stmt);
 

@@ -138,6 +138,7 @@ int main()
 			Ciudad** ciudades = new Ciudad*[tamanyo];
 
 			ciudades = getCiudades();
+			//ciudades[0]->imprimir();
 
 			int i;
 			for(i = 0; i < tamanyo; i++)
