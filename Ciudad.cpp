@@ -14,14 +14,15 @@ Ciudad::Ciudad(int codigo, char* nombre)
 {
 	this->codigo = codigo;
 	this->nombre = new char[strlen(nombre) + 1];
-	this->nombre = nombre;
+	strcpy(this->nombre,nombre);
+
 }
 
 Ciudad::Ciudad(const Ciudad &c)
 {
 	this->codigo = c.codigo;
 	this->nombre = new char[strlen(c.nombre) + 1];
-	this->nombre = c.nombre;
+	strcpy(this->nombre,nombre);
 }
 
 Ciudad::~Ciudad()
@@ -31,5 +32,5 @@ Ciudad::~Ciudad()
 
 void Ciudad::imprimir()
 {
-	cout << "Ciudad " << this->codigo << ": " << this->nombre << endl;;
+	cout << "Ciudad " << this->codigo << ": " <<this->nombre << endl;;
 }
