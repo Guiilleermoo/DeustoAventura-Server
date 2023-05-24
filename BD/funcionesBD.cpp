@@ -7,6 +7,7 @@
 
 #include "../Actividad.h"
 #include "../Reserva.h"
+#include "../Ciudad.h"
 sqlite3 *db;
 sqlite3_stmt *stmt;
 int result;
@@ -369,6 +370,7 @@ Reserva** getReservasDNI(char* dni){
 	return reservas;
 
 }
+
 int getNReservas(char* dni)
 {
 	int resultado;
@@ -545,6 +547,70 @@ void registrarse(char* dni, char* nombre,char* apellido,char* correo,char* contr
 	}
 
 	sqlite3_finalize(stmt);
+}
+
+int getNCiudades()
+{
+	int resultado;
+	char sql[] = "select count(*) from CIUDAD";
+
+	result = sqlite3_prepare_v2(db, sql, strlen(sql), &stmt, NULL);
+
+	if (result != SQLITE_OK)
+	{
+		printf("Error al preparar la consulta SQL: %s\n", sqlite3_errmsg(db));
+		char* error = (char*) sqlite3_errmsg(db);
+		mensajeLog("Error al preparar la consulta SQL: %s\n", error);
+	}
+
+	do {
+		result = sqlite3_step(stmt);
+		if (result == SQLITE_ROW)
+		{
+			resultado = sqlite3_column_int(stmt, 0);
+		}
+	} while (result == SQLITE_ROW);
+
+	sqlite3_finalize(stmt);
+
+	return resultado;
+}
+
+Ciudad** getCiudades()
+{
+	int tamanyo = getNCiudades();
+	Ciudad** ciudades = (Ciudad**) malloc(sizeof(Ciudad*) * tamanyo);
+
+	char sql[] = "select * from CIUDAD";
+
+	result = sqlite3_prepare_v2(db, sql, strlen(sql), &stmt, NULL);
+
+	if (result != SQLITE_OK)
+		{
+			printf("Error al preparar la consulta SQL: %s\n", sqlite3_errmsg(db));
+			char* error = (char*) sqlite3_errmsg(db);
+			mensajeLog("Error al preparar la consulta SQL: %s\n", error);
+		 }
+
+		int i;
+		for(i = 0; i < tamanyo; i++)
+		{
+			result = sqlite3_step(stmt);
+			if (result == SQLITE_ROW)
+			{
+				int codigo = sqlite3_column_int(stmt, 0);
+				char nombre[30];
+				strcpy(nombre, (char*) sqlite3_column_text(stmt, 1));
+
+				Ciudad* ciudad = new Ciudad(codigo, nombre);
+
+				ciudades[i] = ciudad;
+			}
+		}
+
+	sqlite3_finalize(stmt);
+
+	return ciudades;
 }
 
 

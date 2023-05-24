@@ -132,6 +132,37 @@ int main()
 			fflush(stdout);
 		}
 
+		if (strcmp(recvBuff, "VisualizarCiudades") == 0)
+		{
+			int tamanyo = getNCiudades();
+			Ciudad** ciudades = new Ciudad*[tamanyo];
+
+			ciudades = getCiudades();
+
+			int i;
+			for(i = 0; i < tamanyo; i++)
+			{
+				sprintf(sendBuff, "%d", ciudades[i]->codigo);
+				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+				strcpy(sendBuff, ciudades[i]->nombre);
+				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+			}
+			if(tamanyo==0){
+				strcpy(sendBuff, "TAM0");
+				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+				printf("Response sent: %d ciudades \n", tamanyo);
+				mensajeLog((char*)"Response sent\n", NULL);
+			}else{
+				strcpy(sendBuff, "FIN");
+				send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+				printf("Response sent: %d ciudades \n", tamanyo);
+				mensajeLog((char*)"Response sent\n", NULL);
+
+			}
+
+			fflush(stdout);
+		}
+
 		if (strcmp(recvBuff, "VisualizarActividades") == 0)
 		{
 			int tamanyo = getNActividades();
@@ -169,7 +200,6 @@ int main()
 			}
 
 			fflush(stdout);
-
 		}
 
 		if (strcmp(recvBuff, "VisualizarActividadesPorCiudad") == 0)
